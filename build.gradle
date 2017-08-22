@@ -1,0 +1,47 @@
+apply plugin: 'groovy'
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'maven-publish'
+apply plugin: 'jacoco'
+
+publishing {
+    publications {
+        plugin(MavenPublication) {
+            groupId 'com.banyaibalazs.variantmaker'
+            artifactId 'variantmaker'
+            version '1.0.0-SNAPSHOT'
+
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            name 'bintray'
+            url "https://api.bintray.com/maven/balazsbanyai/variantmaker/variantmaker/;publish=1"
+            credentials {
+                username System.getenv('BINTRAY_USER')
+                password System.getenv('BINTRAY_KEY')
+            }
+        }
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.android.tools.build:gradle:2.3.3'
+    compile 'org.codehaus.groovy:groovy-all:2.4.11'
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+check.dependsOn jacocoTestReport
+
